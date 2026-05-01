@@ -21,19 +21,25 @@ router.post("/update-stock", async (req, res) => {
 });
 
 router.post("/update-product", async (req, res) => {
-    const { id, stock, price, oprice, src, cat } = req.body;
+    try {
+        const { id, name, stock, price, oprice, src, cat } = req.body;
 
-    let update = {};
+        let updateData = {};
 
-    if (stock !== undefined) update.stock = stock;
-    if (price !== undefined) update.price = price;
-    if (oprice !== undefined) update.oprice = oprice;
-    if (src !== undefined) update.src = src;
-    if (cat !== undefined) update.cat = cat;
+        if (name !== undefined) updateData.name = name;
+        if (stock !== undefined) updateData.stock = stock;
+        if (price !== undefined) updateData.price = price;
+        if (oprice !== undefined) updateData.oprice = oprice;
+        if (src !== undefined) updateData.src = src;
+        if (cat !== undefined) updateData.cat = cat;
 
-    await Product.findByIdAndUpdate(id, update);
+        await Product.findByIdAndUpdate(id, updateData);
 
-    res.json({ success: true });
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.json({ success: false });
+    }
 });
 
 
