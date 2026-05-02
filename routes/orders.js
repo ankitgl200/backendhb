@@ -21,7 +21,7 @@ router.post("/update", async (req, res) => {
 
   const order = await Order.findById(id);
 
-  if (status === "accepted") {
+  if (status === "delivered") {
     // 🔥 reduce stock
     for (let item of order.items) {
       await Product.findByIdAndUpdate(item.id, {
