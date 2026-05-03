@@ -4,9 +4,21 @@ const Product = require("../models/product");
 
 // PLACE ORDER
 router.post("/place", async (req, res) => {
-  const order = new Order(req.body);
-  await order.save();
-  res.json({ success: true });
+  try {
+    const order = new Order(req.body);
+
+    const savedOrder = await order.save(); // 🔥 important
+
+    res.json({
+      success: true,
+      _id: savedOrder._id,
+      createdAt: savedOrder.createdAt
+    });
+
+  } catch (err) {
+    console.error("❌ Order save error:", err);
+    res.status(500).json({ success: false });
+  }
 });
 
 // GET ALL ORDERS (ADMIN)
