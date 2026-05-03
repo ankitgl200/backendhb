@@ -6,7 +6,12 @@ const orderSchema = new mongoose.Schema({
   phone: String,
   items: Array,
   total: Number,
-  status: { type: String, default: "pending" }
+  status: { type: String, default: "pending" },
+
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", orderSchema);
