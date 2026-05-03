@@ -33,4 +33,22 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const data = await Feedback.find().sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      data
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+});
+
 module.exports = router;
