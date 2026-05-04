@@ -9,8 +9,28 @@ router.post("/admin-login", (req, res) => {
   const { password } = req.body;
 
   if (password === ADMIN_PASSWORD) {
-    return res.json({ success: true });
+    router.post("/admin-login", (req, res) => {
+      const { password } = req.body;
+
+      if (password === ADMIN_PASSWORD) {
+        res.cookie("adminAuth", "true", {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 1000 * 60 * 60
+        });
+
+        return res.json({ success: true });
+      }
+
+      res.json({ success: false });
+    });
   }
+  router.get("/check", (req, res) => {
+    if (req.cookies.adminAuth === "true") {
+      return res.json({ success: true });
+    }
+    res.status(401).json({ success: false });
+  });
 
   res.json({ success: false });
 });
