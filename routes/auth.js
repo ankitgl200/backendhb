@@ -41,4 +41,8 @@ router.post("/dev-login", (req, res) => {
   res.json({ success: false });
 });
 
+router.post("/logout", (req, res) => {
+  res.clearCookie("adminAuth");
+  res.json({ success: true });
+});
 module.exports = router;
