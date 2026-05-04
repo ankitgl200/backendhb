@@ -11,7 +11,8 @@ router.post("/admin-login", (req, res) => {
   if (password === ADMIN_PASSWORD) {
     res.cookie("adminAuth", "true", {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "none",
+      secure: true,
       maxAge: 1000 * 60 * 60
     });
 
