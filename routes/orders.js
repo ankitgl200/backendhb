@@ -26,10 +26,9 @@ router.post("/place", auth, async (req, res) => {
 });
 
 // GET ALL ORDERS (ADMIN)
-router.get("/", auth, async (req, res) => {
-  const orders = await Order.find().sort({ createdAt: -1 });
-  res.json(orders);
-});
+if (!req.user.role || req.user.role !== "admin") {
+  return res.status(403).json({ error: "Not allowed" });
+}
 // 🔥 GET ORDERS BY USER PHONE
 router.get("/my", auth, async (req, res) => {
   try {
@@ -46,7 +45,7 @@ router.get("/my", auth, async (req, res) => {
 });
 
 // UPDATE STATUS
-router.post("/update", async (req, res) => {
+router.post("/update", auth, async (req, res) => {
   const { id, status } = req.body;
 
   const order = await Order.findById(id);
@@ -67,7 +66,7 @@ router.post("/update", async (req, res) => {
 });
 
 // DELETE ORDER
-router.post("/delete", async (req, res) => {
+router.post("/delete", auth, async (req, res) => {
   await Order.findByIdAndDelete(req.body.id);
   res.json({ success: true });
 });
