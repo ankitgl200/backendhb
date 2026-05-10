@@ -26,9 +26,16 @@ router.post("/place", auth, async (req, res) => {
 });
 
 // GET ALL ORDERS (ADMIN)
-if (!req.user.role || req.user.role !== "admin") {
-  return res.status(403).json({ error: "Not allowed" });
-}
+// GET ALL ORDERS (ADMIN)
+router.get("/", auth, async (req, res) => {
+  // 🔐 ADMIN CHECK
+  if (!req.user.role || req.user.role !== "admin") {
+    return res.status(403).json({ error: "Not allowed" });
+  }
+
+  const orders = await Order.find().sort({ createdAt: -1 });
+  res.json(orders);
+});
 // 🔥 GET ORDERS BY USER PHONE
 router.get("/my", auth, async (req, res) => {
   try {
