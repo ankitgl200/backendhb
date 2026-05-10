@@ -1,49 +1,76 @@
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
 
-// 🔐 Passwords
-const ADMIN_PASSWORD = "hbadmin2026";
-const DEV_PASSWORD = "OPENFORDEV";
+// 🔐 ENV (use .env in production)
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hbadmin2026";
+const DEV_PASSWORD = process.env.DEV_PASSWORD || "OPENFORDEV";
+const SECRET = process.env.JWT_SECRET;
 
-// ✅ ADMIN LOGIN
+// 🔐 ADMIN LOGIN
 router.post("/admin-login", (req, res) => {
   const { password } = req.body;
 
   if (password === ADMIN_PASSWORD) {
-    res.cookie("adminAuth", "true", {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: 1000 * 60 * 60
-    });
+    const token = jwt.sign(
+      { role: "admin" },
+      SECRET,
+      { expiresIn: "2h" }
+    );
 
-    return res.json({ success: true });
+    return res.json({
+      success: true,
+      token
+    });
   }
 
   res.json({ success: false });
 });
 
-// ✅ CHECK AUTH
-router.get("/check", (req, res) => {
-  if (req.cookies.adminAuth === "true") {
-    return res.json({ success: true });
-  }
-
-  res.status(401).json({ success: false });
-});
-
-// DEV MODE LOGIN (optional)
+// 🔐 DEV LOGIN (optional)
 router.post("/dev-login", (req, res) => {
   const { password } = req.body;
 
   if (password === DEV_PASSWORD) {
-    return res.json({ success: true });
+    const token = jwt.sign(
+      { role: "dev" },
+      SECRET,
+      { expiresIn: "12h" }
+    );
+
+    return res.json({
+      success: true,
+      token
+    });
   }
 
   res.json({ success: false });
 });
 
+// 🔐 VERIFY ADMIN TOKEN
+router.get("/check", (req, res) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ success: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+
+    if (decoded.role === "admin" || decoded.role === "dev") {
+      return res.json({ success: true });
+    }
+
+    res.status(403).json({ success: false });
+
+  } catch {
+    res.status(401).json({ success: false });
+  }
+});
+
+// 🔐 LOGOUT (frontend just removes token)
 router.post("/logout", (req, res) => {
-  res.clearCookie("adminAuth");
   res.json({ success: true });
 });
+
 module.exports = router;
