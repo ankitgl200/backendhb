@@ -1,13 +1,17 @@
 const router = require("express").Router();
 const Order = require("../models/order");
 const Product = require("../models/product");
+const auth = require("../middleware/auth");
 
 // PLACE ORDER
-router.post("/place", async (req, res) => {
+router.post("/place", auth, async (req, res) => {
   try {
-    const order = new Order(req.body);
+    const order = new Order({
+      ...req.body,
+      phone: req.user.phone // 🔐 secure
+    });
 
-    const savedOrder = await order.save(); // 🔥 important
+    const savedOrder = await order.save();
 
     res.json({
       success: true,
@@ -22,9 +26,23 @@ router.post("/place", async (req, res) => {
 });
 
 // GET ALL ORDERS (ADMIN)
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   const orders = await Order.find().sort({ createdAt: -1 });
   res.json(orders);
+});
+// 🔥 GET ORDERS BY USER PHONE
+router.get("/my", auth, async (req, res) => {
+  try {
+    const orders = await Order.find({
+      phone: req.user.phone
+    }).sort({ createdAt: -1 });
+
+    res.json(orders);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json([]);
+  }
 });
 
 // UPDATE STATUS
