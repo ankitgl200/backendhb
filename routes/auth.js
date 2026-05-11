@@ -31,10 +31,14 @@ router.post("/dev-login", (req, res) => {
   try {
     const { password } = req.body;
 
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET missing");
+    }
+
     if (password === DEV_PASSWORD) {
       const token = jwt.sign(
         { role: "dev" },
-        SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: "12h" }
       );
 
@@ -45,7 +49,7 @@ router.post("/dev-login", (req, res) => {
 
   } catch (err) {
     console.error("DEV LOGIN ERROR:", err);
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
