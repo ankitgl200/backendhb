@@ -56,22 +56,22 @@ router.post("/dev-login", (req, res) => {
 
 
 
+
 // ✅ SIGNUP
 router.post("/signup", async (req, res) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, room } = req.body;
 
-    if (!name || !phone) {
+    if (!name || !phone || !room) {
       return res.json({ success: false, message: "Missing data" });
     }
 
-    let user = await User.findOne({ phone });
-
-    if (user) {
+    let existing = await User.findOne({ phone });
+    if (existing) {
       return res.json({ success: false, message: "User already exists" });
     }
 
-    user = new User({
+    const user = new User({
       name,
       phone,
       room
@@ -81,7 +81,7 @@ router.post("/signup", async (req, res) => {
 
     const token = jwt.sign(
       { phone: user.phone, name: user.name, role: "user" },
-      SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: "30d" }
     );
 
@@ -92,11 +92,10 @@ router.post("/signup", async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false });
+    console.error("SIGNUP ERROR:", err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
-
 // ✅ LOGIN
 router.post("/login", async (req, res) => {
   try {
