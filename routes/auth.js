@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
 // 🔐 ENV (use .env in production)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hbadmin2026";
@@ -52,6 +53,78 @@ router.post("/dev-login", (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
+
+
+// ✅ SIGNUP
+router.post("/signup", async (req, res) => {
+  try {
+    const { name, phone } = req.body;
+
+    if (!name || !phone) {
+      return res.json({ success: false, message: "Missing data" });
+    }
+
+    let user = await User.findOne({ phone });
+
+    if (user) {
+      return res.json({ success: false, message: "User already exists" });
+    }
+
+    user = new User({
+      name,
+      phone,
+      room: "X-01"
+    });
+
+    await user.save();
+
+    const token = jwt.sign(
+      { phone: user.phone, name: user.name, role: "user" },
+      SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false });
+  }
+});
+
+// ✅ LOGIN
+router.post("/login", async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    const user = await User.findOne({ phone });
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    const token = jwt.sign(
+      { phone: user.phone, name: user.name, role: "user" },
+      SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      success: true,
+      token,
+      user
+    });
+
+  } catch (err) {
+    res.status(500).json({ success: false });
+  }
+});
+
 
 // 🔐 VERIFY ADMIN TOKEN
 router.get("/check", (req, res) => {
