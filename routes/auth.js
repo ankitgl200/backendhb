@@ -74,7 +74,7 @@ router.post("/signup", async (req, res) => {
     user = new User({
       name,
       phone,
-      room: "X-01"
+      room
     });
 
     await user.save();
@@ -82,7 +82,7 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign(
       { phone: user.phone, name: user.name, role: "user" },
       SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "30d" }
     );
 
     res.json({
