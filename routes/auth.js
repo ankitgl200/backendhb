@@ -1,6 +1,6 @@
 // 🔐 ENV (use .env in production)
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hbadmin2026";
-const DEV_PASSWORD = process.env.DEV_PASSWORD || "OPENFORDEV";
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const DEV_PASSWORD = process.env.DEV_PASSWORD;
 const SECRET = process.env.JWT_SECRET;
 
 
