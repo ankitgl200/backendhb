@@ -3,6 +3,16 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 const auth = require("../middleware/auth");
 
+router.get("/", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.error("ORDERS ERROR:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // PLACE ORDER
 router.post("/place", auth, async (req, res) => {
   try {
