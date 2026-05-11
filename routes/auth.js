@@ -28,22 +28,25 @@ router.post("/admin-login", (req, res) => {
 
 // 🔐 DEV LOGIN (optional)
 router.post("/dev-login", (req, res) => {
-  const { password } = req.body;
+  try {
+    const { password } = req.body;
 
-  if (password === DEV_PASSWORD) {
-    const token = jwt.sign(
-      { role: "dev" },
-      SECRET,
-      { expiresIn: "12h" }
-    );
+    if (password === DEV_PASSWORD) {
+      const token = jwt.sign(
+        { role: "dev" },
+        SECRET,
+        { expiresIn: "12h" }
+      );
 
-    return res.json({
-      success: true,
-      token
-    });
+      return res.json({ success: true, token });
+    }
+
+    res.json({ success: false });
+
+  } catch (err) {
+    console.error("DEV LOGIN ERROR:", err);
+    res.status(500).json({ success: false });
   }
-
-  res.json({ success: false });
 });
 
 // 🔐 VERIFY ADMIN TOKEN
