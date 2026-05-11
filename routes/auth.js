@@ -1,11 +1,13 @@
-const router = require("express").Router();
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-
 // 🔐 ENV (use .env in production)
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "hbadmin2026";
 const DEV_PASSWORD = process.env.DEV_PASSWORD || "OPENFORDEV";
 const SECRET = process.env.JWT_SECRET;
+
+
+const router = require("express").Router();
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
 
 // 🔐 ADMIN LOGIN
 router.post("/admin-login", (req, res) => {
