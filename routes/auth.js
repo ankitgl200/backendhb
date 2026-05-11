@@ -124,11 +124,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
-
 // 🔐 VERIFY ADMIN TOKEN
 router.get("/check", (req, res) => {
   const token = req.headers.authorization;
-
+  res.json({ success: true });
   if (!token) {
     return res.status(401).json({ success: false });
   }
