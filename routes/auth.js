@@ -126,22 +126,21 @@ router.post("/login", async (req, res) => {
 
 // 🔐 VERIFY ADMIN TOKEN
 router.get("/check", (req, res) => {
-  const token = req.headers.authorization;
-  res.json({ success: true });
+  const token = req.headers.authorization?.split(" ")[1];
+
   if (!token) {
     return res.status(401).json({ success: false });
   }
 
   try {
-    const decoded = jwt.verify(token, SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (decoded.role === "admin" || decoded.role === "dev") {
-      return res.json({ success: true });
-    }
+    res.json({
+      success: true,
+      user: decoded
+    });
 
-    res.status(403).json({ success: false });
-
-  } catch {
+  } catch (err) {
     res.status(401).json({ success: false });
   }
 });
