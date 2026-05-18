@@ -3,7 +3,7 @@ const Order = require("../models/order");
 // const auth = require("../middleware/auth"); // ✅ FIXED: was missing
 
 // ADMIN OVERVIEW
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
 
     try {
 
