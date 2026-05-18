@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Order = require("../models/order");
-const auth = require("../middleware/auth"); // ✅ FIXED: was missing
+// const auth = require("../middleware/auth"); // ✅ FIXED: was missing
 
 // ADMIN OVERVIEW
 router.get("/", auth, async (req, res) => {
