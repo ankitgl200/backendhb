@@ -94,14 +94,14 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign(
             { id: user._id, phone: user.phone, role: user.role },
             JWT_SECRET,
-            { expiresIn: "7d" }
+            { expiresIn: "60d" }
         );
 
         res.cookie("session", token, {
             httpOnly: true,
             sameSite: "none",   // 🔥 VERY IMPORTANT
-            secure: false,      // true if using HTTPS
-            maxAge: 7 * 24 * 60 * 60 * 1000,
+            secure: true,      // true if using HTTPS
+            maxAge: 60 * 24 * 60 * 60 * 1000,
             path: "/"
         });
 
