@@ -16,7 +16,7 @@ app.use(cookieParser());
 // FIX: Better CORS handling
 
 app.use(cors({
-  origin: true, // your frontend
+  origin: "https://hostel-bites-sigma.vercel.app/", // your frontend
   credentials: true
 }));
 
