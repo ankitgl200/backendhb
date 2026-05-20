@@ -8,6 +8,11 @@ const User = require("./models/user");
 const app = express();
 const PORT = process.env.PORT || 5500;
 const JWT_SECRET = "hostelbites_secret_key_2026";
+const Settings = require("./models/Settings");
+
+
+
+initSettings();
 
 // Middleware - ORDER MATTERS!
 app.use(express.json());
@@ -19,6 +24,40 @@ app.use(cors({
   origin: "https://hostel-bites-sigma.vercel.app", // your frontend
   credentials: true
 }));
+
+// ================= SHOP STATUS =================
+
+// GET shop status
+app.get("/api/shop-status", async (req, res) => {
+  try {
+    const settings = await Settings.findOne();
+    res.json({ open: settings.shopOpen });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch shop status" });
+  }
+});
+
+
+// TOGGLE shop (ADMIN ONLY)
+app.post("/api/shop-toggle", async (req, res) => {
+  try {
+
+    // 🔥 ADMIN CHECK
+    if (!req.user || req.user.role !== "admin") {
+      return res.status(403).json({ error: "Access denied" });
+    }
+
+    const settings = await Settings.findOne();
+
+    settings.shopOpen = !settings.shopOpen;
+    await settings.save();
+
+    res.json({ open: settings.shopOpen });
+
+  } catch (err) {
+    res.status(500).json({ error: "Toggle failed" });
+  }
+});
 
 // Auth middleware
 async function auth(req, res, next) {
@@ -42,6 +81,13 @@ async function auth(req, res, next) {
   } catch (err) {
     console.log("Auth error:", err.message);
     return res.status(401).json({ success: false, message: "Invalid or expired token" });
+  }
+}
+async function initSettings() {
+  const existing = await Settings.findOne();
+  if (!existing) {
+    await Settings.create({ shopOpen: true });
+    console.log("✅ Default shop settings created");
   }
 }
 
@@ -71,6 +117,16 @@ app.use("/api/feedback", require("./routes/feedbacks"));
 app.get("/", (req, res) => {
   res.send("Hostel Bites Backend Running 🚀");
 });
+
+async function initSettings() {
+  const existing = await Settings.findOne();
+  if (!existing) {
+    await Settings.create({ shopOpen: true });
+    console.log("Default shop setting created");
+  }
+}
+
+initSettings();
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
