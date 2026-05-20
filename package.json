@@ -1,7 +1,7 @@
 {
-  "name": "hostel-bites-backend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Backend for Hostel Bites App",
+  "description": "Hostel Bites Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,12 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
-    "mongoose": "^7.6.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.4.5",
-    "cookie-parser": "^1.4.6"
+    "mongoose": "^7.6.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
