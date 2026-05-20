@@ -12,7 +12,7 @@ const Settings = require("./models/Settings");
 
 
 
-initSettings();
+
 
 // Middleware - ORDER MATTERS!
 app.use(express.json());
@@ -39,7 +39,7 @@ app.get("/api/shop-status", async (req, res) => {
 
 
 // TOGGLE shop (ADMIN ONLY)
-app.post("/api/shop-toggle", async (req, res) => {
+app.post("/api/shop-toggle", auth, async (req, res) => {
   try {
 
     // 🔥 ADMIN CHECK
@@ -83,13 +83,7 @@ async function auth(req, res, next) {
     return res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
 }
-async function initSettings() {
-  const existing = await Settings.findOne();
-  if (!existing) {
-    await Settings.create({ shopOpen: true });
-    console.log("✅ Default shop settings created");
-  }
-}
+
 
 function adminOnly(req, res, next) {
   if (!req.user || req.user.role !== "admin") {
@@ -127,6 +121,7 @@ async function initSettings() {
 }
 
 initSettings();
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
