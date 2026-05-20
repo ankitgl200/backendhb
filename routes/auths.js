@@ -99,9 +99,8 @@ router.post("/login", async (req, res) => {
 
         res.cookie("session", token, {
             httpOnly: true,
-            sameSite: "none",   // 🔥 VERY IMPORTANT
-            secure: true,      // true if using HTTPS
-            maxAge: 60 * 24 * 60 * 60 * 1000,
+            sameSite: "none",   // 🔥 REQUIRED
+            secure: true,       // 🔥 REQUIRED (HTTPS)
             path: "/"
         });
 
