@@ -83,15 +83,6 @@ app.get("/", (req, res) => {
   res.send("Hostel Bites Backend Running 🚀");
 });
 
-async function initSettings() {
-  const existing = await Settings.findOne();
-  if (!existing) {
-    await Settings.create({ shopOpen: true });
-    console.log("Default shop setting created");
-  }
-}
-
-initSettings();
 
 
 app.listen(PORT, () => {
