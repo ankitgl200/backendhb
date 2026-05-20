@@ -8,7 +8,7 @@ const User = require("./models/user");
 const app = express();
 const PORT = process.env.PORT || 5500;
 const JWT_SECRET = "hostelbites_secret_key_2026";
-const Settings = require("./models/Settings");
+
 
 
 
@@ -28,39 +28,7 @@ app.use(cors({
 // ================= SHOP STATUS =================
 
 // GET shop status
-app.get("/api/shop-status", async (req, res) => {
-  try {
-    const settings = await Settings.findOne();
-    res.json({ open: settings.shopOpen });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch shop status" });
-  }
-});
 
-
-// TOGGLE shop (ADMIN ONLY)
-app.post("/api/shop-toggle", auth, async (req, res) => {
-  try {
-    if (!req.user || req.user.role !== "admin") {
-      return res.status(403).json({ error: "Access denied" });
-    }
-
-    // 🔥 ALWAYS USE SINGLE DOCUMENT
-    let settings = await Settings.findOne();
-
-    if (!settings) {
-      settings = await Settings.create({ shopOpen: true });
-    }
-
-    settings.shopOpen = !settings.shopOpen;
-    await settings.save();
-
-    res.json({ open: settings.shopOpen });
-
-  } catch (err) {
-    res.status(500).json({ error: "Toggle failed" });
-  }
-});
 
 // Auth middleware
 async function auth(req, res, next) {
