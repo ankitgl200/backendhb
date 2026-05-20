@@ -41,13 +41,16 @@ app.get("/api/shop-status", async (req, res) => {
 // TOGGLE shop (ADMIN ONLY)
 app.post("/api/shop-toggle", auth, async (req, res) => {
   try {
-
-    // 🔥 ADMIN CHECK
     if (!req.user || req.user.role !== "admin") {
       return res.status(403).json({ error: "Access denied" });
     }
 
-    const settings = await Settings.findOne();
+    // 🔥 ALWAYS USE SINGLE DOCUMENT
+    let settings = await Settings.findOne();
+
+    if (!settings) {
+      settings = await Settings.create({ shopOpen: true });
+    }
 
     settings.shopOpen = !settings.shopOpen;
     await settings.save();
